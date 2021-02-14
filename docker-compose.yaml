@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  mysql_server:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "passw0rd"
+      MYSQL_DATABASE: "crowdfund"
+    ports: 
+    - '127.0.0.1:3306:3306'
