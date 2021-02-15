@@ -37,6 +37,7 @@ func main() {
 
 	// list of router
 	api.POST("/users", userHandler.RegisterUser)
+	api.POST("/sessions", userHandler.Login)
 
 	// listen server on port 3001
 	router.Run(":3001")

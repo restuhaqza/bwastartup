@@ -6,5 +6,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "passw0rd"
       MYSQL_DATABASE: "crowdfund"
+    volumes: 
+    - bwa_database:/var/lib/mysql
     ports: 
     - '127.0.0.1:3306:3306'
+
+
+volumes:
+  bwa_database:
