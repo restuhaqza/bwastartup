@@ -23,7 +23,7 @@ func NewService() *jwtService {
 func (s *jwtService) GenerateToken(userID int) (string, error) {
 	claim := jwt.MapClaims{}
 
-	claim["userID"] = userID
+	claim["user_id"] = userID
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 

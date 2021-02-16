@@ -79,6 +79,7 @@ func (h *userHandler) Login(c *gin.Context) {
 
 		response := helper.APIResponse("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
+		return
 	}
 
 	token, err := h.authService.GenerateToken(loggedInUser.ID)
@@ -142,7 +143,8 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	userID := 1
+	currentUser := c.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
 
 	// path := "images/" + file.Filename
 	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
