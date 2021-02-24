@@ -42,6 +42,9 @@ func main() {
 	// init gin router
 	router := gin.Default()
 
+	// serving static files
+	router.Static("/images", "./images")
+
 	// set api group for `/api/v1`
 	api := router.Group("/api/v1")
 
