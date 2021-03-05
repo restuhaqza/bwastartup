@@ -10,6 +10,7 @@ type Campaign struct {
 	UserID           int
 	Name             string
 	ShortDescription string
+	Description      string
 	Perks            string
 	BackerCount      int
 	GoalAmount       int
