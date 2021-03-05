@@ -4,6 +4,7 @@ import (
 	"bwastartup/campaign"
 	"bwastartup/helper"
 	"bwastartup/user"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -63,6 +64,7 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	var input campaign.CreateCampaignInput
 	err := c.ShouldBindJSON(&input)
 
+	fmt.Println("Baris ini di eksekusi")
 	if err != nil {
 		var errors []string
 		errors = helper.FormatValidationError(err)
