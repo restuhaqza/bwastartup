@@ -8,6 +8,7 @@ services:
       MYSQL_DATABASE: "crowdfund"
     volumes: 
     - bwa_database:/var/lib/mysql
+    - ./bwastartup.sql:/docker-entrypoint-initdb.d/setup.sql
     ports: 
     - '127.0.0.1:3306:3306'
 
