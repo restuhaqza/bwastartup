@@ -101,7 +101,6 @@ func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
 	var inputData campaign.CreateCampaignInput
 
 	err = c.ShouldBindJSON(&inputData)
-
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
@@ -110,6 +109,9 @@ func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+
+	currentUser := c.MustGet("currentUser").(user.User)
+	inputData.User = currentUser
 
 	updatedCampaign, err := h.service.UpdateCampaign(inputID, inputData)
 
