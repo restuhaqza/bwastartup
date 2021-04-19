@@ -63,7 +63,7 @@ func main() {
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
 	api.GET("/campaign/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
-
+	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetUserTransaction)
 	// listen server on port 3001
 	router.Run(":3001")
 
