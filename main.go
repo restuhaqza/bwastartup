@@ -5,6 +5,7 @@ import (
 	"bwastartup/campaign"
 	"bwastartup/handler"
 	"bwastartup/helper"
+	"bwastartup/payment"
 	"bwastartup/transaction"
 	"bwastartup/user"
 	"log"
@@ -36,7 +37,8 @@ func main() {
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 	campaignService := campaign.NewService(campaignRepository)
-	transacionService := transaction.NewService(transactionRepository, campaignRepository)
+	paymentService := payment.NewService()
+	transacionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
 
 	// handler instance
 	userHandler := handler.NewUserHandler(userService, authService)
@@ -64,6 +66,8 @@ func main() {
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
 	api.GET("/campaign/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
 	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetUserTransaction)
+	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
+
 	// listen server on port 3001
 	router.Run(":3001")
 
