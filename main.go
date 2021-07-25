@@ -49,13 +49,16 @@ func main() {
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transacionService)
 
-	userWebHandler := webhandler.NewUserHandler()
+	userWebHandler := webhandler.NewUserHandler(userService)
 
 	// init gin router
 	router := gin.Default()
 	router.Use(cors.Default())
 	// serving static files
 	router.Static("/images", "./images")
+	router.Static("/css", "./web/assets/css")
+	router.Static("/js", "./web/assets/js")
+	router.Static("/webfonts", "./web/assets/webfonts")
 
 	router.HTMLRender = loadTemplates("./web/templates")
 	// set api group for `/api/v1`
