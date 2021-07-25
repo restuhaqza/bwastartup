@@ -8,12 +8,15 @@ import (
 	"bwastartup/payment"
 	"bwastartup/transaction"
 	"bwastartup/user"
+	webhandler "bwastartup/web/handler"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -46,12 +49,15 @@ func main() {
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transacionService)
 
+	userWebHandler := webhandler.NewUserHandler()
+
 	// init gin router
 	router := gin.Default()
 	router.Use(cors.Default())
 	// serving static files
 	router.Static("/images", "./images")
 
+	router.HTMLRender = loadTemplates("./web/templates")
 	// set api group for `/api/v1`
 	api := router.Group("/api/v1")
 
@@ -71,6 +77,7 @@ func main() {
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	api.POST("/transactions/notification", transactionHandler.GetNotification)
 
+	router.GET("/users", userWebHandler.Index)
 	// listen server on port 3001
 	router.Run(":3001")
 
@@ -121,4 +128,26 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 
 		c.Set("currentUser", user)
 	}
+}
+
+func loadTemplates(templatesDir string) multitemplate.Renderer {
+	r := multitemplate.NewRenderer()
+
+	layouts, err := filepath.Glob(templatesDir + "/layouts/*.html")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	includes, err := filepath.Glob(templatesDir + "/**/*")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	for _, include := range includes {
+		layoutCopy := make([]string, len(layouts))
+		copy(layoutCopy, layouts)
+		files := append(layoutCopy, include)
+		r.AddFromFiles(filepath.Base(include), files...)
+	}
+	return r
 }
