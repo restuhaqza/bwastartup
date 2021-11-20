@@ -1,0 +1,32 @@
+{{ define "content" }}
+
+{{if .Error}}
+<div class="alert alert-danger">{{.Error}}</div>
+{{end}}
+
+<h2 class="mb-4">Create New User</h2>
+<form action="/users" method="post">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" name="name" placeholder="Enter name" required value="{{.Name}}">
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" name="email" placeholder="Enter email" required value="{{.Email}}">
+    </div>
+    <div class="form-group">
+        <label for="occupation">Occupation</label>
+        <input type="text" class="form-control" name="occupation" placeholder="Enter occupation" required
+            value="{{.Occupation}}">
+    </div>
+    <div class="form-group">
+        <label for="password"></label>
+        <input type="password" class="form-control" name="password"  required placeholder="Enter password">
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+
+{{end}}
