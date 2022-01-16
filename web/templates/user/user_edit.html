@@ -1,5 +1,8 @@
 {{ define "content" }}
 
+{{if .Error}}
+<div class="alert alert-danger">{{.Error}}</div>
+{{end}}
 
 <h2 class="mb-4">Edit User</h2>
 <form action="/users/update/{{.ID}}" method="post">
