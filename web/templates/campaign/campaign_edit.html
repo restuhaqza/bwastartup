@@ -1,0 +1,37 @@
+{{ define "content" }}
+
+{{if .Error}}
+<div class="alert alert-danger">{{.Error}}</div>
+{{end}}
+
+<h2 class="mb-4">Edit Campaign</h2>
+<form action="/campaigns/update/{{ .ID }}" method="post">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" name="name" placeholder="Enter name" required value="{{.Name}}">
+    </div>
+    <div class="form-group">
+        <label for="short_description">Short Description</label>
+        <input type="text" class="form-control" name="short_description" placeholder="Enter short description" required value="{{ .ShortDescription }}">
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea cols="30" rows="30" class="form-control" name="description" placeholder="Enter description" required>
+            {{ .Description }}
+        </textarea>
+    </div>
+    <div class="form-group">
+        <label for="goal_amount">Goal Amount</label>
+        <input type="number" class="form-control" name="goal_amount"  required placeholder="Enter goal amount" value="{{ .GoalAmount }}">
+    </div>
+    <div class="form-group">
+        <label for="perks">Perks</label>
+        <input type="text" class="form-control" name="perks" required placeholder="Enter perks" value="{{ .Perks }}"></input>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+
+{{end}}

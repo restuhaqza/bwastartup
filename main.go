@@ -17,6 +17,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/multitemplate"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -42,18 +44,24 @@ func main() {
 	authService := auth.NewService()
 	campaignService := campaign.NewService(campaignRepository)
 	paymentService := payment.NewService()
-	transacionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
+	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
 
 	// handler instance
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
-	transactionHandler := handler.NewTransactionHandler(transacionService)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	userWebHandler := webhandler.NewUserHandler(userService)
+	campaignWebHandler := webhandler.NewCampaignHandler(campaignService, userService)
+	transactionWebHandler := webhandler.NewTransactionHandler(transactionService)
+	sessionWebHandler := webhandler.NewSessionHandler(userService)
+
+	cookieStore := cookie.NewStore([]byte(auth.SECRET_KEY))
 
 	// init gin router
 	router := gin.Default()
 	router.Use(cors.Default())
+	router.Use(sessions.Sessions("bwastartup", cookieStore))
 	// serving static files
 	router.Static("/images", "./images")
 	router.Static("/css", "./web/assets/css")
@@ -80,14 +88,32 @@ func main() {
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	api.POST("/transactions/notification", transactionHandler.GetNotification)
 
+	authAdminMiddlewareIns := authAdminMiddleware()
+
 	// router for CMS
-	router.GET("/users", userWebHandler.Index)
-	router.GET("/users/new", userWebHandler.New)
-	router.POST("/users", userWebHandler.Create)
-	router.GET("/users/edit/:id", userWebHandler.Edit)
-	router.POST("/users/update/:id", userWebHandler.Update)
-	router.GET("/users/avatar/:id", userWebHandler.NewAvatar)
-	router.POST("/users/avatar/:id", userWebHandler.CreateAvatar)
+	router.GET("/users", authAdminMiddlewareIns, userWebHandler.Index)
+	router.GET("/users/new", authAdminMiddlewareIns, userWebHandler.New)
+	router.POST("/users", authAdminMiddlewareIns, userWebHandler.Create)
+	router.GET("/users/edit/:id", authAdminMiddlewareIns, userWebHandler.Edit)
+	router.POST("/users/update/:id", authAdminMiddlewareIns, userWebHandler.Update)
+	router.GET("/users/avatar/:id", authAdminMiddlewareIns, userWebHandler.NewAvatar)
+	router.POST("/users/avatar/:id", authAdminMiddlewareIns, userWebHandler.CreateAvatar)
+
+	router.GET("/campaigns", authAdminMiddlewareIns, campaignWebHandler.Index)
+	router.GET("/campaigns/new", authAdminMiddlewareIns, campaignWebHandler.New)
+	router.POST("/campaigns", authAdminMiddlewareIns, campaignWebHandler.Create)
+	router.GET("/campaigns/images/:id", authAdminMiddlewareIns, campaignWebHandler.NewImage)
+	router.POST("/campaigns/images/:id", authAdminMiddlewareIns, campaignWebHandler.CreateImage)
+	router.GET("/campaigns/edit/:id", authAdminMiddlewareIns, campaignWebHandler.Edit)
+	router.POST("/campaigns/update/:id", authAdminMiddlewareIns, campaignWebHandler.Update)
+	router.GET("/campaigns/show/:id", authAdminMiddlewareIns, campaignWebHandler.Show)
+
+	router.GET("/transactions", authAdminMiddlewareIns, transactionWebHandler.Index)
+
+	router.GET("/login", sessionWebHandler.New)
+	router.GET("/logout", sessionWebHandler.Logout)
+	router.POST("/session", sessionWebHandler.Login)
+
 	// listen server on port 3001
 	router.Run(":3001")
 
@@ -137,6 +163,21 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		}
 
 		c.Set("currentUser", user)
+	}
+}
+
+func authAdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+
+		//userID
+		userIDSession := session.Get("userID")
+
+		if userIDSession == nil {
+			c.Redirect(http.StatusFound, "/login")
+			return
+		}
+
 	}
 }
 

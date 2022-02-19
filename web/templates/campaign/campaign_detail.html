@@ -1,0 +1,39 @@
+{{ define "content" }}
+
+<h2 class="mb-4">Detail Campaign</h2>
+<div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" name="name" placeholder="Enter name" required value="{{.Name}}">
+</div>
+<div class="form-group">
+    <label for="short_description">Short Description</label>
+    <input type="text" class="form-control" name="short_description" placeholder="Enter short description" required
+        value="{{ .ShortDescription }}">
+</div>
+<div class="form-group">
+    <label for="description">Description</label>
+    <textarea cols="30" rows="30" class="form-control" name="description" placeholder="Enter description" required>
+            {{ .Description }}
+        </textarea>
+</div>
+<div class="form-group">
+    <label for="goal_amount">Goal Amount</label>
+    <input type="text" class="form-control" name="goal_amount" required placeholder="Enter goal amount"
+        value="{{ .GoalAmountFormatIDR }}">
+</div>
+<div class="form-group">
+    <label for="perks">Perks</label>
+    <input type="text" class="form-control" name="perks" required p laceholder="Enter perks"
+        value="{{ .Perks }}"></input>
+</div>
+<div class="form-group">
+    <label for="total_backer">Total Backer</label>
+    <input type="text" class="form-control" value="{{ .BackerCount }}"/>
+</div>
+<div class="form-group">
+    <label for="current_amount">Current Amount</label>
+    <input type="text" class="form-control" value="{{ .CurrentAmountFormatIDR }}"/>
+</div>
+
+
+{{end}}
